@@ -1,0 +1,19 @@
+Box Refinement 性能测试结果
+==================================================
+
+ORIGINAL 测试结果:
+  total_time: 0.5402214527130127
+  avg_epoch_time: 0.18007381757100424
+  avg_batch_time: 0.03601476351420085
+  feature_extractions: 150
+
+OPTIMIZED 测试结果:
+
+SAMPLING 测试结果:
+
+MIXED_PRECISION 测试结果:
+  normal_time: 1.2494261264801025
+  amp_time: 1.3259551525115967
+  speedup: 0.9422838503349571
+  memory_saved: ~30-50%
+

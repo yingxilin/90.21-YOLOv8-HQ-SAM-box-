@@ -1,0 +1,86 @@
+# Box Refinement 模型配置 
+model:
+  hidden_dim: 256
+  num_heads: 8
+  max_offset: 0.1  # 最大偏移（归一化坐标，0-1范围）
+
+# 迭代配置
+refinement:
+  max_iter: 3
+  stop_threshold: 0.01  # 归一化坐标的早停阈值
+
+# 训练配置
+training:
+  batch_size: 16
+  epochs: 120
+  learning_rate: 5e-5  # 降低学习率，提高稳定性
+  weight_decay: 1e-5
+  lr_scheduler: 'cosine'  # 'cosine', 'step', 'none'
+  warmup_epochs: 5
+  use_amp: true  # 启用混合精度训练，加速训练
+  feature_cache: true  # 启用特征缓存
+
+# 损失函数配置
+loss:
+  l1_weight: 1.0
+  iou_weight: 0.5  # 降低IoU权重，避免损失过大
+  total_variation_weight: 0.1  # 平滑性正则化
+
+# 数据配置
+data:
+  train_split: 'train'
+  val_split: 'val'
+  data_root: 'D:/search/fungi/26/data/FungiTastic-Mini'  # 需要根据实际路径修改
+  image_size: 300
+  data_subset: ''
+  masks_file: 'D:/search/fungi/26/data/masks/FungiTastic-Mini-TrainMasks.parquet'
+  sample_ratio: 0.1     # ✅ 限制只使用 10% 数据，真正启用 fast 模式
+  num_workers: 8  # 增加多线程数量，加速数据加载
+  persistent_workers: true  # 保持worker进程，减少启动开销
+  augmentation:
+    enabled: true
+    rotation_range: 15
+    scale_range: [0.9, 1.1]
+    brightness_range: 0.2
+    noise_std: 0.01
+
+# HQ-SAM 配置
+hqsam:
+  checkpoint: 'D:/search/fungi/26/data/models/fungitastic_ckpts/sam_hq_vit_h.pth'
+  model_type: 'hq_vit_h'
+  device: 'cuda'
+
+# 输出配置
+output:
+  save_dir: './outputs/box_refinement'
+  log_dir: './logs/box_refinement'
+  checkpoint_dir: './checkpoints/box_refinement'
+  visualization_dir: './visualizations/box_refinement'
+  save_freq: 5
+  log_freq: 10
+  vis_freq: 100
+
+# 优化配置
+optimization:
+  feature_cache:
+    enabled: true
+    cache_dir: './features'
+    auto_detect: true
+  performance:
+    use_amp: true
+    batch_size_multiplier: 1.0
+    data_sampling: null
+
+# 评估配置
+evaluation:
+  metrics: ['iou', 'l1', 'offset_magnitude']
+  val_freq: 1
+  save_predictions: true
+  visualize_samples: 10
+
+# 调试配置
+debug:
+  enabled: false
+  max_samples: 100
+  verbose: true
+  profile: false
