@@ -1,0 +1,22 @@
+num_workers: 4
+split: 'val'
+
+# embedding method
+feature_model: 'dinov2'
+#feature_model_name: 'vitl14_reg'
+
+#classification method
+classifier: 'nn'
+#classifier: 'nn'
+batch_size: 32
+
+# other
+random_seed: 777
+root_path: "../../../"
+path_out: "../../../out/"
+debug: False
+
+data_path: 'D:/search/fungi/20/data/FungiTastic'
+mask_path: 'D:/search/fungi/25/data/masks1'
+# models will be downloaded to this path
+ckpt_path: 'D:/search/fungi/20/models/fungitastic_ckpts'
