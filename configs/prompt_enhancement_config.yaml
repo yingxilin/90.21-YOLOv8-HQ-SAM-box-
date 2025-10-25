@@ -1,0 +1,81 @@
+# Prompt Enhancement Module 配置文件
+
+prompt_enhancement:
+  # 启用的策略列表
+  enabled_strategies:
+    - edge_guided        # 基于边缘检测
+    - texture_contrast   # 基于纹理对比度
+    - uncertainty_guided # 基于 SAM 不确定性
+  
+  # 全局点生成参数
+  max_total_points: 8          # 总点数上限
+  positive_ratio: 0.75         # 正样本占比 (例如 6 正 + 2 负)
+  min_point_distance: 10       # 点之间最小距离(像素)
+  
+  # 策略 1: Edge-Guided (边缘引导)
+  edge_guided:
+    canny_low_threshold: 50           # Canny 低阈值
+    canny_high_threshold: 150         # Canny 高阈值
+    edge_distance_range: [5, 15]      # 距离边缘的像素范围
+    num_points: 3                     # 生成点数
+    enable_negative_samples: true     # 是否生成负样本
+  
+  # 策略 2: Texture-Contrast (纹理对比)
+  texture_contrast:
+    num_points: 2                     # 生成点数
+    color_weight: 0.6                 # 颜色权重
+    texture_weight: 0.4               # 纹理权重
+    high_score_percentile: 75         # 高分区域阈值(百分位)
+    low_score_percentile: 25          # 低分区域阈值(百分位)
+  
+  # 策略 3: Uncertainty-Guided (不确定性引导)
+  uncertainty_guided:
+    num_points: 2                     # 生成点数
+    uncertainty_threshold: 0.3        # 不确定性阈值 (0-1)
+    use_weighted_sampling: true       # 是否使用加权采样
+
+# 可视化配置
+visualization:
+  enable: true                                    # 是否启用可视化
+  save_dir: 'visualizations/point_prompts/'      # 保存目录
+  draw_bbox: true                                # 绘制边界框
+  draw_point_labels: true                        # 绘制点标签
+  positive_color: [0, 255, 0]                    # 正样本颜色 (RGB)
+  negative_color: [255, 0, 0]                    # 负样本颜色 (RGB)
+  point_radius: 5                                # 点半径
+
+# 评估配置
+evaluation:
+  baseline_mode: false              # 是否为基线模式 (不使用点提示)
+  save_intermediate_results: true   # 保存中间结果
+  metrics:
+    - iou                           # IoU
+    - dice                          # Dice coefficient
+    - boundary_f1                   # 边界 F1 score
+
+# 实验配置 (用于 Ablation Study)
+experiments:
+  # 实验 1: 仅 Edge-Guided
+  edge_only:
+    enabled_strategies: ['edge_guided']
+    max_total_points: 4
+  
+  # 实验 2: 仅 Texture-Contrast
+  texture_only:
+    enabled_strategies: ['texture_contrast']
+    max_total_points: 3
+  
+  # 实验 3: 仅 Uncertainty-Guided
+  uncertainty_only:
+    enabled_strategies: ['uncertainty_guided']
+    max_total_points: 3
+  
+  # 实验 4: Edge + Texture
+  edge_texture:
+    enabled_strategies: ['edge_guided', 'texture_contrast']
+    max_total_points: 6
+  
+  # 实验 5: 完整版 (所有策略)
+  full:
+    enabled_strategies: ['edge_guided', 'texture_contrast', 'uncertainty_guided']
+    max_total_points: 8
